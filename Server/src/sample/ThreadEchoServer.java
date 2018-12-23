@@ -10,7 +10,7 @@ import java.util.HashMap;
 
 public class ThreadEchoServer {
 
-    static final int PORT = 1978;
+    static final int PORT = 2000;
     private TextField inputText;
     private TextArea chatWindow;
     public static boolean serverStatus = true;

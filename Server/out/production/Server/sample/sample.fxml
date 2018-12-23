@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
@@ -15,11 +18,11 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="805.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="696.0" prefWidth="805.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
    <children>
       <AnchorPane layoutX="2.0" layoutY="30.0" prefHeight="27.0" prefWidth="805.0">
          <children>
-            <Label fx:id="currentItem" layoutX="345.0" prefHeight="27.0" prefWidth="108.0" text="Auction Server" textAlignment="CENTER">
+            <Label fx:id="currentItem" layoutX="357.0" prefHeight="27.0" prefWidth="108.0" text="Auction Server" textAlignment="CENTER">
                <font>
                   <Font size="15.0" />
                </font>
@@ -29,49 +32,56 @@
          </children></AnchorPane>
       <AnchorPane layoutY="261.0" prefHeight="100.0" prefWidth="533.0">
          <children>
-            <TableView fx:id="stockTable" prefHeight="233.0" prefWidth="534.0">
-              <columns>
-                <TableColumn fx:id="Symbol" prefWidth="103.0" text="Symbol" />
-                <TableColumn fx:id="SecName" prefWidth="275.0" text="Security Name" />
-                  <TableColumn fx:id="Price" minWidth="0.0" prefWidth="155.0" text="Price" />
-              </columns>
+            <TableView fx:id="stockTable" prefHeight="233.0" prefWidth="445.0">
+               <columns>
+                  <TableColumn fx:id="Symbol" prefWidth="86.0" text="Symbol" />
+                  <TableColumn fx:id="SecName" prefWidth="264.0" text="Security Name" />
+                  <TableColumn fx:id="Price" minWidth="0.0" prefWidth="94.0" text="Price" />
+               </columns>
                <columnResizePolicy>
                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                </columnResizePolicy>
             </TableView>
          </children>
       </AnchorPane>
-      <AnchorPane layoutX="532.0" layoutY="210.0" prefHeight="284.0" prefWidth="267.0">
+      <AnchorPane layoutX="440.0" layoutY="201.0" prefHeight="284.0" prefWidth="357.0">
          <children>
-            <TextArea fx:id="biddingChat" layoutX="2.0" layoutY="51.0" prefHeight="233.0" prefWidth="268.0" />
+            <LineChart fx:id="lineChart" layoutX="5.0" prefHeight="295.0" prefWidth="347.0" title="Bidding History">
+               <xAxis>
+                  <CategoryAxis side="BOTTOM" />
+               </xAxis>
+               <yAxis>
+                  <NumberAxis side="LEFT" />
+               </yAxis>
+            </LineChart>
          </children>
       </AnchorPane>
       <MenuBar fx:id="menuBar" prefHeight="29.0" prefWidth="805.0">
-        <menus>
-          <Menu fx:id="serverMenuItem" mnemonicParsing="false" text="Server">
-            <items>
-              <MenuItem fx:id="startServer" mnemonicParsing="false" onAction="#serverStart" text="Start Server" />
+         <menus>
+            <Menu fx:id="serverMenuItem" mnemonicParsing="false" text="Server">
+               <items>
+                  <MenuItem fx:id="startServer" mnemonicParsing="false" onAction="#serverStart" text="Start Server" />
                   <MenuItem fx:id="stopServer" mnemonicParsing="false" onAction="#stopServer" text="Stop Server" />
                   <MenuItem fx:id="exitProgram" mnemonicParsing="false" onAction="#exitProgram" text="Exit" />
-            </items>
-          </Menu>
-          <Menu fx:id="stocksMenuItem" mnemonicParsing="false" text="Stocks">
-            <items>
-              <MenuItem fx:id="updateDatabase" mnemonicParsing="false" onAction="#setTableDatabase" text="Update Database" />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Help">
-            <items>
-              <MenuItem mnemonicParsing="false" text="About" />
-            </items>
-          </Menu>
-        </menus>
+               </items>
+            </Menu>
+            <Menu fx:id="stocksMenuItem" mnemonicParsing="false" text="Stocks">
+               <items>
+                  <MenuItem fx:id="updateDatabase" mnemonicParsing="false" onAction="#setTableDatabase" text="Update Database" />
+               </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Help">
+               <items>
+                  <MenuItem mnemonicParsing="false" text="About" />
+               </items>
+            </Menu>
+         </menus>
       </MenuBar>
       <AnchorPane layoutX="12.0" layoutY="71.0" prefHeight="123.0" prefWidth="753.0">
          <children>
-            <AnchorPane layoutX="572.0" layoutY="6.0" prefHeight="111.0" prefWidth="90.0" style="-fx-border-color: #e0f2cd#e0f2cd;">
+            <AnchorPane fx:id="TSLATab" layoutX="572.0" layoutY="6.0" onMouseClicked="#TSLALineChartUpdate" prefHeight="111.0" prefWidth="90.0" style="-fx-border-color: #e0f2cd#e0f2cd;">
                <children>
-                  <ImageView fitHeight="96.0" fitWidth="86.0" layoutX="2.0" layoutY="16.0" opacity="0.19" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="96.0" fitWidth="86.0" layoutX="2.0" layoutY="16.0" onMouseClicked="#TSLALineChartUpdate" opacity="0.19" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@Images/img2.png" />
                      </image>
@@ -85,9 +95,9 @@
                   <Text fx:id="viewSecurityName7" layoutX="20.0" layoutY="95.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="49.4999942779541" />
                </children>
             </AnchorPane>
-            <AnchorPane layoutX="479.0" layoutY="6.0" prefHeight="111.0" prefWidth="92.0" style="-fx-border-color: #f9d6d4#f9d6d4 #f9d6d4#f9d6d4;">
+            <AnchorPane fx:id="XLNXTab" layoutX="479.0" layoutY="6.0" onMouseClicked="#XLNXLineChartUpdate" prefHeight="111.0" prefWidth="92.0" style="-fx-border-color: #f9d6d4#f9d6d4 #f9d6d4#f9d6d4;">
                <children>
-                  <ImageView fitHeight="105.0" fitWidth="86.0" layoutX="2.0" layoutY="15.0" opacity="0.19" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="105.0" fitWidth="86.0" layoutX="2.0" layoutY="15.0" onMouseClicked="#XLNXLineChartUpdate" opacity="0.19" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@Images/img1.png" />
                      </image>
@@ -101,9 +111,9 @@
                   <Text fx:id="viewSecurityName6" layoutX="20.0" layoutY="95.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="49.4999942779541" />
                </children>
             </AnchorPane>
-            <AnchorPane layoutX="385.0" layoutY="6.0" prefHeight="113.0" prefWidth="92.0" style="-fx-border-color: #f9d6d4#f9d6d4 #f9d6d4#f9d6d4;">
+            <AnchorPane fx:id="YHOOTab" layoutX="385.0" layoutY="6.0" onMouseClicked="#YHOOLineChartUpdate" prefHeight="113.0" prefWidth="92.0" style="-fx-border-color: #f9d6d4#f9d6d4 #f9d6d4#f9d6d4;">
                <children>
-                  <ImageView fitHeight="88.0" fitWidth="79.0" layoutX="4.0" layoutY="17.0" opacity="0.19" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="88.0" fitWidth="79.0" layoutX="4.0" layoutY="17.0" onMouseClicked="#YHOOLineChartUpdate" opacity="0.19" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@Images/img1.png" />
                      </image>
@@ -117,9 +127,9 @@
                   <Text fx:id="viewSecurityName5" layoutX="20.0" layoutY="96.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="49.4999942779541" />
                </children>
             </AnchorPane>
-            <AnchorPane layoutX="291.0" layoutY="6.0" prefHeight="113.0" prefWidth="93.0" style="-fx-border-color: #e0f2cd#e0f2cd;">
+            <AnchorPane fx:id="GOOGLTab" layoutX="291.0" layoutY="6.0" onMouseClicked="#GOOGLLineChartUpdate" prefHeight="113.0" prefWidth="93.0" style="-fx-border-color: #e0f2cd#e0f2cd;">
                <children>
-                  <ImageView fitHeight="105.0" fitWidth="86.0" layoutX="2.0" layoutY="14.0" opacity="0.19" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="105.0" fitWidth="86.0" layoutX="2.0" layoutY="14.0" onMouseClicked="#GOOGLLineChartUpdate" opacity="0.19" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@Images/img2.png" />
                      </image>
@@ -133,9 +143,9 @@
                   <Text fx:id="viewSecurityName4" layoutX="20.0" layoutY="95.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="49.4999942779541" />
                </children>
             </AnchorPane>
-            <AnchorPane layoutX="200.0" layoutY="6.0" prefHeight="113.0" prefWidth="90.0" style="-fx-border-color: #f9d6d4#f9d6d4 #f9d6d4#f9d6d4;">
+            <AnchorPane fx:id="MSFTTab" layoutX="200.0" layoutY="6.0" onMouseClicked="#MSFTLineChartUpdate" prefHeight="113.0" prefWidth="90.0" style="-fx-border-color: #f9d6d4#f9d6d4 #f9d6d4#f9d6d4;">
                <children>
-                  <ImageView fitHeight="95.0" fitWidth="86.0" layoutX="2.0" layoutY="2.0" opacity="0.19" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="95.0" fitWidth="86.0" layoutX="2.0" layoutY="2.0" onMouseClicked="#MSFTLineChartUpdate" opacity="0.19" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@Images/img1.png" />
                      </image>
@@ -149,9 +159,9 @@
                   <Text fx:id="viewSecurityName3" layoutX="18.0" layoutY="95.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="49.4999942779541" />
                </children>
             </AnchorPane>
-            <AnchorPane layoutX="110.0" layoutY="6.0" prefHeight="113.0" prefWidth="89.0" style="-fx-border-color: #e0f2cd#e0f2cd;">
+            <AnchorPane fx:id="VRTUTab" layoutX="110.0" layoutY="6.0" onMouseClicked="#VRTULineChartUpdate" prefHeight="113.0" prefWidth="89.0" style="-fx-border-color: #e0f2cd#e0f2cd;">
                <children>
-                  <ImageView fitHeight="105.0" fitWidth="86.0" layoutX="1.0" layoutY="4.0" opacity="0.19" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="105.0" fitWidth="86.0" layoutX="1.0" layoutY="4.0" onMouseClicked="#VRTULineChartUpdate" opacity="0.19" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@Images/img2.png" />
                      </image>
@@ -165,9 +175,9 @@
                   <Text fx:id="viewSecurityName2" layoutX="20.0" layoutY="95.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="49.4999942779541" />
                </children>
             </AnchorPane>
-            <AnchorPane layoutX="20.0" layoutY="6.0" prefHeight="113.0" prefWidth="89.0" style="-fx-border-color: #f9d6d4#f9d6d4;" AnchorPane.bottomAnchor="0.5" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="643.0" AnchorPane.topAnchor="6.0">
+            <AnchorPane fx:id="FBTab" layoutX="20.0" layoutY="6.0" onMouseClicked="#FBLineChartUpdate" prefHeight="113.0" prefWidth="89.0" style="-fx-border-color: #f9d6d4#f9d6d4;" AnchorPane.bottomAnchor="0.5" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="643.0" AnchorPane.topAnchor="6.0">
                <children>
-                  <ImageView fitHeight="105.0" fitWidth="86.0" layoutX="1.0" layoutY="3.0" opacity="0.19" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="105.0" fitWidth="86.0" layoutX="1.0" layoutY="3.0" onMouseClicked="#FBLineChartUpdate" opacity="0.19" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@Images/img1.png" />
                      </image>
@@ -187,9 +197,9 @@
             </AnchorPane>
          </children>
       </AnchorPane>
-      <AnchorPane layoutX="676.0" layoutY="77.0" prefHeight="111.0" prefWidth="90.0" style="-fx-border-color: #f9d6d4#f9d6d4 #f9d6d4#f9d6d4;">
+      <AnchorPane fx:id="TXNTab" layoutX="676.0" layoutY="77.0" onMouseClicked="#TXNLineChartUpdate" prefHeight="111.0" prefWidth="90.0" style="-fx-border-color: #f9d6d4#f9d6d4 #f9d6d4#f9d6d4;">
          <children>
-            <ImageView fitHeight="96.0" fitWidth="86.0" layoutX="2.0" layoutY="15.0" opacity="0.19" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="96.0" fitWidth="86.0" layoutX="2.0" layoutY="15.0" onMouseClicked="#TXNLineChartUpdate" opacity="0.19" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@Images/img1.png" />
                </image>
@@ -205,7 +215,20 @@
       </AnchorPane>
       <Label layoutX="84.0" layoutY="220.0" text="Search Company" textFill="#808080" />
       <TextField fx:id="searchID" layoutX="226.0" layoutY="215.0" onAction="#searchList" opacity="0.84" prefHeight="27.0" prefWidth="156.0" promptText="Enter Company Name" />
-      <TextField fx:id="sendMessage" editable="false" layoutX="569.0" layoutY="215.0" onAction="#sendMessage" prefHeight="27.0" prefWidth="202.0" promptText="Send Message to Clients" />
+      <TextField fx:id="sendMessage" editable="false" layoutX="608.0" layoutY="494.0" onAction="#sendMessage" prefHeight="27.0" prefWidth="172.0" promptText="Send Message to Clients" />
+      <TableView fx:id="biddingHistory" layoutX="2.0" layoutY="494.0" prefHeight="200.0" prefWidth="583.0">
+         <columns>
+            <TableColumn fx:id="clientNameColumn" prefWidth="88.0" text="Client Name" />
+            <TableColumn fx:id="clientTimeColumn" prefWidth="70.0" text="Time" />
+            <TableColumn fx:id="clientSymbolColumn" prefWidth="89.0" text="Symbol" />
+            <TableColumn fx:id="clientSecColumn" prefWidth="250.0" text="Security Name" />
+            <TableColumn fx:id="clientPriceColumn" prefWidth="84.0" text="Price" />
+         </columns>
+         <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+         </columnResizePolicy>
+      </TableView>
+      <TextArea fx:id="biddingChat" editable="false" layoutX="585.0" layoutY="534.0" prefHeight="160.0" prefWidth="219.0" />
    </children>
    <padding>
       <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />

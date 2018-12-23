@@ -6,37 +6,44 @@ import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
 import java.io.*;
-import java.time.Duration;
+import java.net.URL;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 
-public class Controller {
+public class Controller  implements Initializable {
 
     private int minute;
     private int hour;
     private int second;
     private Server server;
     public static boolean serverStatus = false;
-
     private String message;
+    private Timeline timer;
+    private XYChart.Series<String, Number> series;
+
 
     private static ObservableList<Stocks> data;
+    private static ObservableList<ClientDB> bidHistoryData;
 
-    public  void refreshTable(){
+    public void refreshTable() {
         stockTable.refresh();
     }
+
+    // FXML Stuff
 
     @FXML
     private MenuBar menuBar;   // Menu bar in GUI
@@ -66,10 +73,10 @@ public class Controller {
     private TableColumn<Stocks, String> Price;
 
     @FXML
-    private   Label time;
+    private Label time;
 
     @FXML
-    private   TextArea biddingChat;
+    private TextArea biddingChat;
 
 
     @FXML
@@ -78,7 +85,6 @@ public class Controller {
 
     @FXML
     private TextField sendMessage;
-
 
 
     @FXML
@@ -144,9 +150,126 @@ public class Controller {
 
 
     @FXML
+    private AnchorPane FBTab;
+
+    @FXML
+    private LineChart<String, Number> lineChart;
+
+
+    @FXML
+    private AnchorPane TXNTab;
+
+    @FXML
+    private AnchorPane VRTUTab;
+
+    @FXML
+    private AnchorPane MSFTTab;
+
+
+    @FXML
+    private AnchorPane GOOGLTab;
+
+    @FXML
+    private AnchorPane YHOOTab;
+
+    @FXML
+    private AnchorPane XLNXTab;
+
+
+    @FXML
+    private AnchorPane TSLATab;
+
+    @FXML
+    private TableView<ClientDB> biddingHistory;
+
+    @FXML
+    private TableColumn<ClientDB, String> clientNameColumn;
+
+    @FXML
+    private TableColumn<ClientDB, String> clientTimeColumn;
+
+    @FXML
+    private TableColumn<ClientDB, String> clientSymbolColumn;
+
+    @FXML
+    private TableColumn<ClientDB, String> clientSecColumn;
+
+
+    @FXML
+    private TableColumn<ClientDB, String> clientPriceColumn;
+
+
+
+
+    @FXML
+    void FBLineChartUpdate() {
+
+
+        lineChartUpdate("FB");
+
+
+    }
+
+    @FXML
+    void VRTULineChartUpdate() {
+
+    }
+
+
+    @FXML
+    void MSFTLineChartUpdate() {
+
+    }
+
+    @FXML
+    void GOOGLLineChartUpdate() {
+
+    }
+
+    @FXML
+    void YHOOLineChartUpdate() {
+
+    }
+
+    @FXML
+    void XLNXLineChartUpdate() {
+
+    }
+
+    @FXML
+    void TSLALineChartUpdate() {
+
+    }
+
+    @FXML
+    void TXNLineChartUpdate() {
+
+    }
+
+
+    @FXML
+    void lineChartUpdate(String id) {
+
+
+       series = new XYChart.Series<String, Number>();
+
+        for (StockHistoryDB i : Stocks.map.get(id).getBidHistory()) {
+
+            series.getData().add(new XYChart.Data<>(i.getTime(), i.getPrice()));
+
+        }
+
+        series.setName(id);
+        lineChart.getData().add(series);
+
+
+    }
+
+
+    @FXML
     void searchList() {
 
-        if(searchID.getText().equals("")) stockTable.scrollTo(0);
+        if (searchID.getText().equals("")) stockTable.scrollTo(0);
 
         stockTable.getItems().stream()
                 .filter(item -> (item.getSymbol().equals(searchID.getText())))
@@ -164,7 +287,7 @@ public class Controller {
                     stockTable.scrollTo(item);
                 });
 
-                searchID.clear();
+        searchID.clear();
 
     }
 
@@ -186,7 +309,7 @@ public class Controller {
     @FXML
     void stopServer() {
 
-        ThreadEchoServer.serverStatus=false;
+        ThreadEchoServer.serverStatus = false;
 
 
     }
@@ -195,23 +318,23 @@ public class Controller {
     @FXML
     void sendMessage() {
 
-        server.sendMessage(sendMessage.getText() );
+        server.sendMessage(sendMessage.getText());
 
     }
-
-
 
 
     @FXML
     void serverStart() {
 
         ThreadEchoServer.serverStatus = true;
+        setTable();
+
 
         Thread worker = new Thread(
                 new Runnable() {
                     @Override
                     public void run() {
-                        ThreadEchoServer test= new ThreadEchoServer(sendMessage,biddingChat,Stocks.map);
+                        ThreadEchoServer test = new ThreadEchoServer(sendMessage, biddingChat, Stocks.map);
                         test.startServer();
                     }
                 }
@@ -221,19 +344,13 @@ public class Controller {
         worker.start();
 
 
-
-
-
     }
-
-
 
 
     @FXML
     void updateStocks() {
 
         updateTable(Stocks.stockListCollection);
-        
 
 
     }
@@ -254,7 +371,6 @@ public class Controller {
         Stocks.map = new HashMap<String, Stocks>();
 
 
-
         try {
 
             br = new BufferedReader(new FileReader(csvFile));
@@ -263,15 +379,14 @@ public class Controller {
                 // use comma as separator
                 String[] Name = line.split(cvsSplitBy);
 
-                if(!Name[0].equals(null)  && !Name[1].equals(null) && !Name[2].equals(null))
+                if (!Name[0].equals(null) && !Name[1].equals(null) && !Name[2].equals(null))
 //                    Stocks.stockListCollection.add(new Stocks(Name[0],Name[1],Double.parseDouble(Name[2])));
-                    Stocks.map.put(Name[0],new Stocks(Name[0],Name[1],Double.parseDouble(Name[2])));
+                    Stocks.map.put(Name[0], new Stocks(Name[0], Name[1], Double.parseDouble(Name[2])));
 
             }
 
 
             Stocks.stockListCollection = new ArrayList<Stocks>(Stocks.map.values());
-
 
 
         } catch (FileNotFoundException e) {
@@ -301,14 +416,12 @@ public class Controller {
         viewPrice8.setText(Double.toString(Stocks.map.get("TXN").getPrice()));
 
 
-
         data = FXCollections.observableArrayList(Stocks.stockListCollection);
 
 
-
-        Symbol.setCellValueFactory(new PropertyValueFactory<Stocks,String>("symbol"));
-        SecName.setCellValueFactory(new PropertyValueFactory<Stocks,String>("securityName"));
-        Price.setCellValueFactory(new PropertyValueFactory<Stocks,String>("price"));
+        Symbol.setCellValueFactory(new PropertyValueFactory<Stocks, String>("symbol"));
+        SecName.setCellValueFactory(new PropertyValueFactory<Stocks, String>("securityName"));
+        Price.setCellValueFactory(new PropertyValueFactory<Stocks, String>("price"));
 
         stockTable.setItems(data);
 
@@ -316,8 +429,7 @@ public class Controller {
     }
 
 
-
-    void updateTable(List<Stocks> newList){
+    void updateTable(List<Stocks> newList) {
 
 
         String currentBidSymbol = "AAPL";
@@ -325,21 +437,21 @@ public class Controller {
 
         Iterator<Stocks> itr = newList.iterator();
 
-        while (itr.hasNext()){
+        while (itr.hasNext()) {
 
             Stocks stock = itr.next();
 
-            if(stock.getSymbol().equals(currentBidSymbol)){
+            if (stock.getSymbol().equals(currentBidSymbol)) {
 
                 stock.setPrice(currentBidPrice);
 
-                biddingChat.appendText(stock.getSymbol() + " New Price: "+stock.getPrice() +"\n");
+                biddingChat.appendText(stock.getSymbol() + " New Price: " + stock.getPrice() + "\n");
 
                 Controller.data = FXCollections.observableArrayList(Stocks.stockListCollection);
 
-                Symbol.setCellValueFactory(new PropertyValueFactory<Stocks,String>("symbol"));
-                SecName.setCellValueFactory(new PropertyValueFactory<Stocks,String>("securityName"));
-                Price.setCellValueFactory(new PropertyValueFactory<Stocks,String>("price"));
+                Symbol.setCellValueFactory(new PropertyValueFactory<Stocks, String>("symbol"));
+                SecName.setCellValueFactory(new PropertyValueFactory<Stocks, String>("securityName"));
+                Price.setCellValueFactory(new PropertyValueFactory<Stocks, String>("price"));
 
                 stockTable.setItems(Controller.data);
 
@@ -352,8 +464,65 @@ public class Controller {
 
     }
 
+    void updateClientHistoryTable(){
+
+        System.out.println("Here" );
+
+        clientNameColumn.setCellValueFactory(new PropertyValueFactory<ClientDB, String>("name"));
+        clientTimeColumn.setCellValueFactory(new PropertyValueFactory<ClientDB, String>("time"));
+        clientSymbolColumn.setCellValueFactory(new PropertyValueFactory<ClientDB, String>("symbol"));
+        clientSecColumn.setCellValueFactory(new PropertyValueFactory<ClientDB, String>("securityName"));
+        clientPriceColumn.setCellValueFactory(new PropertyValueFactory<ClientDB, String>("price"));
+//        clientSymbolColumn.setCellValueFactory(new PropertyValueFactory<ClientDB, String>("name"));
+
+//
+//        System.out.println( bidHistoryData.get(0).getSecurityName());
+
+        biddingHistory.setItems(bidHistoryData);
+        biddingHistory.refresh();
 
 
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+
+        stockTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                stockTable.getSelectionModel().clearSelection();
+                lineChart.getData().removeAll();
+                lineChart.getData().clear();
+                lineChartUpdate(newSelection.getSymbol());
+
+            }
+        });
+
+        timer = new Timeline(new KeyFrame(Duration.millis(500), (ActionEvent event) -> {
+
+            stockTable.refresh();
+
+            if(Stocks.map != null) {
+
+                viewPrice1.setText(Double.toString(Stocks.map.get("FB").getPrice()));
+                viewPrice2.setText(Double.toString(Stocks.map.get("VRTU").getPrice()));
+                viewPrice3.setText(Double.toString(Stocks.map.get("MSFT").getPrice()));
+                viewPrice4.setText(Double.toString(Stocks.map.get("GOOGL").getPrice()));
+                viewPrice5.setText(Double.toString(Stocks.map.get("YHOO").getPrice()));
+                viewPrice6.setText(Double.toString(Stocks.map.get("XLNX").getPrice()));
+                viewPrice7.setText(Double.toString(Stocks.map.get("TSLA").getPrice()));
+                viewPrice8.setText(Double.toString(Stocks.map.get("TXN").getPrice()));
+
+            }
+
+            bidHistoryData = FXCollections.observableArrayList(ClientDB.mapClient.values());
 
 
+            if(bidHistoryData != null) updateClientHistoryTable();
+
+        }));
+
+        timer.setCycleCount(Timeline.INDEFINITE);
+        timer.play();
+
+    }
 }

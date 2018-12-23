@@ -1,17 +1,22 @@
 package sample;
 
+import javafx.collections.FXCollections;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
 import java.io.*;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 public class EchoThread extends Thread {
     protected Socket socket;
     private TextField inputText;
     private TextArea chatWindow;
+    private int  biddingStage;
+
 
     private  HashMap<String,Stocks> map;
 
@@ -42,7 +47,9 @@ public class EchoThread extends Thread {
         Boolean nameSet = false;
         String currentKey=null;
 
-        String name = null;
+
+
+        String clientName = null;
 
         try {
 
@@ -55,101 +62,209 @@ public class EchoThread extends Thread {
         }
 
 
+        try {
+            line = brinp.readLine();
 
-        while (true) {
-            try {
-
-                line = brinp.readLine();
-
-                if ((line == null) || line.equalsIgnoreCase("QUIT")) {
-
-
-                    socket.close();
-                    return;
-
-
-                } else {
+            while (line != null && !line.equalsIgnoreCase("quit")){
 
 
 
+                switch (biddingStage){
 
-                    if(!nameSet ){
+                    case 0:
+                        // waiting for client to enter name
+                        clientName = line;
+                        out.writeBytes("Welcome "+clientName +"\n");
+                        out.writeBytes("Please enter the Symbol: ");
+                        chatWindow.appendText("Welcome " +clientName+ "\n");
 
-                        if(!line.equalsIgnoreCase("")){
-                            nameSet = true;
-                            System.out.println("Name Set");
-                            name = line;
-                            chatWindow.appendText("Welcome " +name+ "\n");
+                        biddingStage = 1;
+                        break;
 
+                    case 1:
+
+                        if (Stocks.map.containsKey(line)) {
+
+                            out.writeBytes(Stocks.map.get(line).getSecurityName() +"  Current Price: "+ Stocks.map.get(line).getPrice()+ "\n\r");
+                            out.writeBytes("Enter bidding price: ");
+                            currentKey = line;
+                            biddingStage = 2;
 
                         }else {
-
-                            out.writeBytes("Enter your name: ");
-                            out.flush();
-
+                            out.writeBytes("-1\n");
+                            out.writeBytes("Enter a valid symbol: ");
                         }
-                    }else {
-                        if(!line.trim().equals(""))
-                        chatWindow.appendText(name + "- "+line+ "\n");
+
+                        break;
+
+                    case 2:
 
 
-                        if (!symbolChance) {
-                            String enterSymbol = "Please enter the symbol: ";
+                        if (line.matches("[0-9]+") || line.contains(".") ){
+                            Double biddedPrice = 0.0;
+                            try {
+                                biddedPrice  = Double.parseDouble(line);
+                                if(Stocks.map.get(currentKey).getPrice() <= biddedPrice) {
 
-                                if (Stocks.map.containsKey(line)) {
+                                    out.writeBytes("You have successfully bid for " + map.get(currentKey).getSecurityName() + " with a price of " + biddedPrice);
+                                    Stocks.map.get(currentKey).setPrice(biddedPrice);
+                                    String bidTime = new SimpleDateFormat("hh:mm:ss").format(new Date());
+                                    Stocks.stockListCollection = new ArrayList<Stocks>(Stocks.map.values());
+                                    ClientDB.mapClient.put(currentKey,new ClientDB(clientName,bidTime,Stocks.map.get(currentKey).getSymbol(),Stocks.map.get(currentKey).getSecurityName(),Stocks.map.get(currentKey).getPrice()));
 
-                                    out.writeBytes(Stocks.map.get(line).getSecurityName() +"  Current Price: "+ Stocks.map.get(line).getPrice()+ "\n\r");
-                                    out.flush();
-                                    currentKey = line;
-                                    symbolChance=true;
+                                    Stocks.map.get(currentKey).getBidHistory().add(new StockHistoryDB(clientName,bidTime,biddedPrice));
 
+//                                    System.out.println(ClientDB.mapClient.get(clientName).getName()+ " " +ClientDB.mapClient.get(clientName).getTime() + " " + ClientDB.mapClient.get(clientName).getBoughtStock().getSymbol() + " " + ClientDB.mapClient.get(clientName).getBoughtStock().getPrice());
+                                    out.writeBytes("\nPlease enter the Symbol: ");
+
+                                    biddingStage = 1;
                                 }else {
-                                    out.writeBytes("Enter valid Symbol \n\r");
-                                    out.flush();
+                                    out.writeBytes("Please enter a higher price than current price!\n");
+                                    biddingStage = 2;
+                                    out.writeBytes("Enter bidding price: ");
+
+
                                 }
 
-                                if(!symbolChance) {
-                                    out.writeBytes(enterSymbol);
-                                    out.flush();
-                                }
-                        }
-                        else {
-                            out.writeBytes("Enter bidding price: ");
-                            out.flush();
+                            }catch (NumberFormatException e){
 
-                            if (line.matches("[0-9]+") || line.contains(".") ){
-                                Double biddedPrice = 0.0;
-                                try {
-                                  biddedPrice  = Double.parseDouble(line);
-
-
-                                }catch (NumberFormatException e){
-
-                                    out.writeBytes("\nEnter a valid price !!!!");
-                                    out.flush();
-
-                                }finally {
-
-                                    if(Stocks.map.get(currentKey).getPrice() <= biddedPrice) {
-
-                                        System.out.println("You have successfully bid for " + map.get(currentKey).getSecurityName() + " with a price of " + biddedPrice);
-                                        Stocks.map.get(currentKey).setPrice(biddedPrice);
-                                        Stocks.stockListCollection = new ArrayList<Stocks>(Stocks.map.values());
-
-
-                                    }
-                                }
+                                out.writeBytes("\nEnter a valid price !!!!");
+                                biddingStage = 2;
+                                out.writeBytes("\nEnter bidding price: ");
 
                             }
+                        }else{
+                            out.writeBytes("\nEnter a valid price !!!!");
+                            biddingStage = 2;
+                            out.writeBytes("\nEnter bidding price: ");
                         }
 
-                    }
+                        break;
+
+
+                    default:
+                        System.out.println("Something went wrong! Please check help section\n\r");
+//                        return;
+
+
 
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
-                return;
+
+                out.flush();
+                line = brinp.readLine();
+
             }
+
+            socket.close();
+            return;
+
+
+
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+
         }
+
+
+
+
+
+//        while (true) {
+//            try {
+//
+//                line = brinp.readLine();
+//
+//                if ((line == null) || line.equalsIgnoreCase("QUIT")) {
+//
+//
+//                    socket.close();
+//                    return;
+//
+//
+//                } else {
+//
+//
+//
+//
+//                    if(!nameSet ){
+//
+//                        if(!line.equalsIgnoreCase("")){
+//                            nameSet = true;
+//                            System.out.println("Name Set");
+//                            name = line;
+//                            chatWindow.appendText("Welcome " +name+ "\n");
+//
+//
+//                        }else {
+//
+//                            out.writeBytes("Enter your name: ");
+//                            out.flush();
+//
+//                        }
+//                    }else {
+//                        if(!line.trim().equals(""))
+//                        chatWindow.appendText(name + "- "+line+ "\n");
+//
+//
+//                        if (!symbolChance) {
+//                            String enterSymbol = "Please enter the symbol: ";
+//
+//                                if (Stocks.map.containsKey(line)) {
+//
+//                                    out.writeBytes(Stocks.map.get(line).getSecurityName() +"  Current Price: "+ Stocks.map.get(line).getPrice()+ "\n\r");
+//                                    out.flush();
+//                                    currentKey = line;
+//                                    symbolChance=true;
+//
+//                                }else {
+//                                    out.writeBytes("Enter valid Symbol \n\r");
+//                                    out.flush();
+//                                }
+//
+//                                if(!symbolChance) {
+//                                    out.writeBytes(enterSymbol);
+//                                    out.flush();
+//                                }
+//                        }
+//                        else {
+//                            out.writeBytes("Enter bidding price: ");
+//                            out.flush();
+//
+//                            if (line.matches("[0-9]+") || line.contains(".") ){
+//                                Double biddedPrice = 0.0;
+//                                try {
+//                                  biddedPrice  = Double.parseDouble(line);
+//
+//
+//                                }catch (NumberFormatException e){
+//
+//                                    out.writeBytes("\nEnter a valid price !!!!");
+//                                    out.flush();
+//
+//                                }finally {
+//
+//                                    if(Stocks.map.get(currentKey).getPrice() <= biddedPrice) {
+//
+//                                        System.out.println("You have successfully bid for " + map.get(currentKey).getSecurityName() + " with a price of " + biddedPrice);
+//                                        Stocks.map.get(currentKey).setPrice(biddedPrice);
+//                                        Stocks.stockListCollection = new ArrayList<Stocks>(Stocks.map.values());
+//
+//
+//                                    }
+//                                }
+//
+//                            }
+//                        }
+//
+//                    }
+//
+//                }
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//                return;
+//            }
+//        }
     }
 }
