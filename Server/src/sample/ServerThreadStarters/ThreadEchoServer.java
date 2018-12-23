@@ -1,7 +1,8 @@
-package sample;
+package sample.ServerThreadStarters;
 
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import sample.StockDatabase.Stocks;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -14,7 +15,7 @@ public class ThreadEchoServer {
     private TextField inputText;
     private TextArea chatWindow;
     public static boolean serverStatus = true;
-    private HashMap<String,Stocks> map;
+    private HashMap<String, Stocks> map;
 
     public ThreadEchoServer(TextField inputText, TextArea chatWindow,HashMap<String,Stocks> map) {
         this.inputText = inputText;

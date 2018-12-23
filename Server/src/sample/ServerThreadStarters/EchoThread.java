@@ -1,8 +1,10 @@
-package sample;
+package sample.ServerThreadStarters;
 
-import javafx.collections.FXCollections;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import sample.ClientSide.ClientDB;
+import sample.StockDatabase.StockHistoryDB;
+import sample.StockDatabase.Stocks;
 
 import java.io.*;
 import java.net.Socket;
@@ -18,7 +20,7 @@ public class EchoThread extends Thread {
     private int  biddingStage;
 
 
-    private  HashMap<String,Stocks> map;
+    private  HashMap<String, Stocks> map;
 
 
     public EchoThread(Socket clientSocket,TextArea chatWindow, TextField inputText,HashMap<String,Stocks> map ) {
@@ -105,19 +107,16 @@ public class EchoThread extends Thread {
                             try {
                                 biddedPrice  = Double.parseDouble(line);
                                 if(Stocks.map.get(currentKey).getPrice() <= biddedPrice) {
-
                                     out.writeBytes("You have successfully bid for " + map.get(currentKey).getSecurityName() + " with a price of " + biddedPrice);
                                     Stocks.map.get(currentKey).setPrice(biddedPrice);
                                     String bidTime = new SimpleDateFormat("hh:mm:ss").format(new Date());
                                     Stocks.stockListCollection = new ArrayList<Stocks>(Stocks.map.values());
                                     ClientDB.mapClient.put(currentKey,new ClientDB(clientName,bidTime,Stocks.map.get(currentKey).getSymbol(),Stocks.map.get(currentKey).getSecurityName(),Stocks.map.get(currentKey).getPrice()));
-
                                     Stocks.map.get(currentKey).getBidHistory().add(new StockHistoryDB(clientName,bidTime,biddedPrice));
-
-//                                    System.out.println(ClientDB.mapClient.get(clientName).getName()+ " " +ClientDB.mapClient.get(clientName).getTime() + " " + ClientDB.mapClient.get(clientName).getBoughtStock().getSymbol() + " " + ClientDB.mapClient.get(clientName).getBoughtStock().getPrice());
                                     out.writeBytes("\nPlease enter the Symbol: ");
 
                                     biddingStage = 1;
+
                                 }else {
                                     out.writeBytes("Please enter a higher price than current price!\n");
                                     biddingStage = 2;

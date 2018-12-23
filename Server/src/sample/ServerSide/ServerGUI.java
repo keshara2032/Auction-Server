@@ -1,4 +1,4 @@
-package sample;
+package sample.ServerSide;
 
 public class ServerGUI {
 

@@ -1,7 +1,6 @@
-package sample;
+package sample.ClientSide;
 
 import java.util.HashMap;
-import java.util.List;
 
 public class ClientDB {
 

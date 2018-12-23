@@ -1,9 +1,7 @@
-package sample;
+package sample.ServerSide;
 
-import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -16,11 +14,13 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+import sample.ClientSide.ClientDB;
+import sample.StockDatabase.StockHistoryDB;
+import sample.StockDatabase.Stocks;
+import sample.ServerThreadStarters.ThreadEchoServer;
 
-import javax.swing.*;
 import java.io.*;
 import java.net.URL;
-import java.time.LocalDateTime;
 import java.util.*;
 
 
@@ -43,7 +43,7 @@ public class Controller  implements Initializable {
         stockTable.refresh();
     }
 
-    // FXML Stuff
+    // FXML Attributes
 
     @FXML
     private MenuBar menuBar;   // Menu bar in GUI
@@ -200,12 +200,10 @@ public class Controller  implements Initializable {
 
 
 
+    // FXML Methods
 
     @FXML
     void FBLineChartUpdate() {
-
-
-        lineChartUpdate("FB");
 
 
     }
@@ -247,8 +245,9 @@ public class Controller  implements Initializable {
     }
 
 
+
     @FXML
-    void lineChartUpdate(String id) {
+    void lineChartUpdate(String id) {   // Method to update Line Chart
 
 
        series = new XYChart.Series<String, Number>();
@@ -262,12 +261,11 @@ public class Controller  implements Initializable {
         series.setName(id);
         lineChart.getData().add(series);
 
-
     }
 
 
     @FXML
-    void searchList() {
+    void searchList() {    // Method to search through the stock database
 
         if (searchID.getText().equals("")) stockTable.scrollTo(0);
 
@@ -293,7 +291,7 @@ public class Controller  implements Initializable {
 
 
     @FXML
-    void setTableDatabase() {
+    void setTableDatabase() {   // Method to set the tableview from stock database
 
         setTable();
 
@@ -324,36 +322,31 @@ public class Controller  implements Initializable {
 
 
     @FXML
-    void serverStart() {
+    void serverStart() {   // Start server
 
-        ThreadEchoServer.serverStatus = true;
+
+
+
         setTable();
 
+        if(!ThreadEchoServer.serverStatus) {
 
-        Thread worker = new Thread(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        ThreadEchoServer test = new ThreadEchoServer(sendMessage, biddingChat, Stocks.map);
-                        test.startServer();
+            Thread worker = new Thread(
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            ThreadEchoServer test = new ThreadEchoServer(sendMessage, biddingChat, Stocks.map);
+                            test.startServer();
+                        }
                     }
-                }
 
-        );
+            );
 
-        worker.start();
-
-
+            worker.start();
+            ThreadEchoServer.serverStatus = true;
+        }
     }
 
-
-    @FXML
-    void updateStocks() {
-
-        updateTable(Stocks.stockListCollection);
-
-
-    }
 
 
     void setTable() {    //initialize the table
@@ -361,7 +354,7 @@ public class Controller  implements Initializable {
         stockTable.setEditable(true);
 
 
-        String csvFile = "/Users/kesharaweerasinghe/Desktop/CO225/Server/src/sample/stocks.csv";
+        String csvFile = "/Users/kesharaweerasinghe/Desktop/CO225/Server/src/sample/StockDatabase/stocks.csv";
         BufferedReader br = null;
         String line = "";
         String cvsSplitBy = ",";
@@ -380,7 +373,6 @@ public class Controller  implements Initializable {
                 String[] Name = line.split(cvsSplitBy);
 
                 if (!Name[0].equals(null) && !Name[1].equals(null) && !Name[2].equals(null))
-//                    Stocks.stockListCollection.add(new Stocks(Name[0],Name[1],Double.parseDouble(Name[2])));
                     Stocks.map.put(Name[0], new Stocks(Name[0], Name[1], Double.parseDouble(Name[2])));
 
             }
@@ -403,17 +395,7 @@ public class Controller  implements Initializable {
             }
         }
 
-//        System.out.println(Stocks.map.get("AAPL").getPrice());
 
-
-        viewPrice1.setText(Double.toString(Stocks.map.get("FB").getPrice()));
-        viewPrice2.setText(Double.toString(Stocks.map.get("VRTU").getPrice()));
-        viewPrice3.setText(Double.toString(Stocks.map.get("MSFT").getPrice()));
-        viewPrice4.setText(Double.toString(Stocks.map.get("GOOGL").getPrice()));
-        viewPrice5.setText(Double.toString(Stocks.map.get("YHOO").getPrice()));
-        viewPrice6.setText(Double.toString(Stocks.map.get("XLNX").getPrice()));
-        viewPrice7.setText(Double.toString(Stocks.map.get("TSLA").getPrice()));
-        viewPrice8.setText(Double.toString(Stocks.map.get("TXN").getPrice()));
 
 
         data = FXCollections.observableArrayList(Stocks.stockListCollection);
@@ -429,54 +411,14 @@ public class Controller  implements Initializable {
     }
 
 
-    void updateTable(List<Stocks> newList) {
-
-
-        String currentBidSymbol = "AAPL";
-        double currentBidPrice = 233.34;
-
-        Iterator<Stocks> itr = newList.iterator();
-
-        while (itr.hasNext()) {
-
-            Stocks stock = itr.next();
-
-            if (stock.getSymbol().equals(currentBidSymbol)) {
-
-                stock.setPrice(currentBidPrice);
-
-                biddingChat.appendText(stock.getSymbol() + " New Price: " + stock.getPrice() + "\n");
-
-                Controller.data = FXCollections.observableArrayList(Stocks.stockListCollection);
-
-                Symbol.setCellValueFactory(new PropertyValueFactory<Stocks, String>("symbol"));
-                SecName.setCellValueFactory(new PropertyValueFactory<Stocks, String>("securityName"));
-                Price.setCellValueFactory(new PropertyValueFactory<Stocks, String>("price"));
-
-                stockTable.setItems(Controller.data);
-
-                stockTable.refresh();
-
-            }
-
-
-        }
-
-    }
-
     void updateClientHistoryTable(){
 
-        System.out.println("Here" );
 
         clientNameColumn.setCellValueFactory(new PropertyValueFactory<ClientDB, String>("name"));
         clientTimeColumn.setCellValueFactory(new PropertyValueFactory<ClientDB, String>("time"));
         clientSymbolColumn.setCellValueFactory(new PropertyValueFactory<ClientDB, String>("symbol"));
         clientSecColumn.setCellValueFactory(new PropertyValueFactory<ClientDB, String>("securityName"));
         clientPriceColumn.setCellValueFactory(new PropertyValueFactory<ClientDB, String>("price"));
-//        clientSymbolColumn.setCellValueFactory(new PropertyValueFactory<ClientDB, String>("name"));
-
-//
-//        System.out.println( bidHistoryData.get(0).getSecurityName());
 
         biddingHistory.setItems(bidHistoryData);
         biddingHistory.refresh();
@@ -487,42 +429,58 @@ public class Controller  implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        stockTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-            if (newSelection != null) {
-                stockTable.getSelectionModel().clearSelection();
-                lineChart.getData().removeAll();
-                lineChart.getData().clear();
-                lineChartUpdate(newSelection.getSymbol());
 
-            }
-        });
 
-        timer = new Timeline(new KeyFrame(Duration.millis(500), (ActionEvent event) -> {
+        try {
 
-            stockTable.refresh();
+            try {
 
-            if(Stocks.map != null) {
+                stockTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+                    if (newSelection != null) {
+                        stockTable.getSelectionModel().clearSelection();
+                        lineChart.getData().removeAll();
+                        lineChart.getData().clear();
+                        lineChartUpdate(newSelection.getSymbol());
 
-                viewPrice1.setText(Double.toString(Stocks.map.get("FB").getPrice()));
-                viewPrice2.setText(Double.toString(Stocks.map.get("VRTU").getPrice()));
-                viewPrice3.setText(Double.toString(Stocks.map.get("MSFT").getPrice()));
-                viewPrice4.setText(Double.toString(Stocks.map.get("GOOGL").getPrice()));
-                viewPrice5.setText(Double.toString(Stocks.map.get("YHOO").getPrice()));
-                viewPrice6.setText(Double.toString(Stocks.map.get("XLNX").getPrice()));
-                viewPrice7.setText(Double.toString(Stocks.map.get("TSLA").getPrice()));
-                viewPrice8.setText(Double.toString(Stocks.map.get("TXN").getPrice()));
+                    }
+                });
+
+            }catch (IndexOutOfBoundsException e){
 
             }
 
-            bidHistoryData = FXCollections.observableArrayList(ClientDB.mapClient.values());
+
+            timer = new Timeline(new KeyFrame(Duration.millis(500), (ActionEvent event) -> {
+
+                stockTable.refresh();
+
+                if(Stocks.map != null) {
+
+                    viewPrice1.setText(Double.toString(Stocks.map.get("FB").getPrice()));
+                    viewPrice2.setText(Double.toString(Stocks.map.get("VRTU").getPrice()));
+                    viewPrice3.setText(Double.toString(Stocks.map.get("MSFT").getPrice()));
+                    viewPrice4.setText(Double.toString(Stocks.map.get("GOOGL").getPrice()));
+                    viewPrice5.setText(Double.toString(Stocks.map.get("YHOO").getPrice()));
+                    viewPrice6.setText(Double.toString(Stocks.map.get("XLNX").getPrice()));
+                    viewPrice7.setText(Double.toString(Stocks.map.get("TSLA").getPrice()));
+                    viewPrice8.setText(Double.toString(Stocks.map.get("TXN").getPrice()));
+
+                }
+
+                bidHistoryData = FXCollections.observableArrayList(ClientDB.mapClient.values());
 
 
-            if(bidHistoryData != null) updateClientHistoryTable();
+                if(bidHistoryData != null) updateClientHistoryTable();
 
-        }));
+            }));
 
-        timer.setCycleCount(Timeline.INDEFINITE);
-        timer.play();
+            timer.setCycleCount(Timeline.INDEFINITE);
+            timer.play();
+
+
+        }catch (Exception e){
+//            e.printStackTrace();
+        }
 
     }
 }

@@ -1,4 +1,4 @@
-package sample;
+package sample.ClientSide;
 
 import java.io.EOFException;
 import java.io.IOException;

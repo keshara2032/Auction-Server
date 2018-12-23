@@ -1,4 +1,4 @@
-package sample;
+package sample.StockDatabase;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -11,11 +11,8 @@ public class Stocks {
     private String symbol;
     private String securityName;
     private double price;
-
     private ObservableList<StockHistoryDB> bidHistory;
-
     static public List<Stocks> stockListCollection;
-
     public static HashMap<String,Stocks> map;
 
 
