@@ -15,21 +15,24 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="696.0" prefWidth="805.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.ServerSide.Controller">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="698.0" prefWidth="806.0" style="-fx-background-color: #ffffff;" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.ServerSide.Controller">
    <children>
+      <HBox prefHeight="100.0" prefWidth="200.0" />
       <AnchorPane layoutX="2.0" layoutY="30.0" prefHeight="27.0" prefWidth="805.0">
          <children>
-            <Label fx:id="currentItem" layoutX="357.0" prefHeight="27.0" prefWidth="108.0" text="Auction Server" textAlignment="CENTER">
+            <Label fx:id="currentItem" layoutX="357.0" prefHeight="27.0" prefWidth="108.0" text="Auction Server" textAlignment="CENTER" textFill="#5a8090">
                <font>
-                  <Font size="15.0" />
+                  <Font name="Arial Bold" size="15.0" />
                </font>
             </Label>
-            <Label layoutX="20.0" layoutY="5.0" text="3rd December 2018" />
-            <Label fx:id="time" layoutX="729.0" layoutY="5.0" prefHeight="17.0" prefWidth="63.0" text="13:23:44" />
-         </children></AnchorPane>
+            <Label fx:id="date" layoutX="20.0" layoutY="5.0" />
+            <Label fx:id="time" layoutX="729.0" layoutY="5.0" prefHeight="17.0" prefWidth="63.0" />
+         </children>
+      </AnchorPane>
       <AnchorPane layoutY="261.0" prefHeight="100.0" prefWidth="533.0">
          <children>
             <TableView fx:id="stockTable" prefHeight="233.0" prefWidth="445.0">
@@ -56,9 +59,9 @@
             </LineChart>
          </children>
       </AnchorPane>
-      <MenuBar fx:id="menuBar" prefHeight="29.0" prefWidth="805.0">
+      <MenuBar fx:id="menuBar" prefHeight="29.0" prefWidth="805.0" style="-fx-background-color: #cfd4d6#cfd4d6;">
          <menus>
-            <Menu fx:id="serverMenuItem" mnemonicParsing="false" text="Server">
+            <Menu fx:id="serverMenuItem" mnemonicParsing="false" style="-fx-text-fill: #ffffff;" text="Server">
                <items>
                   <MenuItem fx:id="startServer" mnemonicParsing="false" onAction="#serverStart" text="Start Server" />
                   <MenuItem fx:id="stopServer" mnemonicParsing="false" onAction="#stopServer" text="Stop Server" />
@@ -79,7 +82,7 @@
       </MenuBar>
       <AnchorPane layoutX="12.0" layoutY="71.0" prefHeight="123.0" prefWidth="753.0">
          <children>
-            <AnchorPane fx:id="TSLATab" layoutX="572.0" layoutY="6.0" onMouseClicked="#TSLALineChartUpdate" prefHeight="111.0" prefWidth="90.0" style="-fx-border-color: #e0f2cd#e0f2cd;">
+            <AnchorPane fx:id="TSLATab" layoutX="572.0" layoutY="6.0" onMouseClicked="#TSLALineChartUpdate" prefHeight="118.0" prefWidth="90.0" style="-fx-border-color: #e0f2cd#e0f2cd;">
                <children>
                   <ImageView fitHeight="96.0" fitWidth="86.0" layoutX="2.0" layoutY="16.0" onMouseClicked="#TSLALineChartUpdate" opacity="0.19" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -95,7 +98,7 @@
                   <Text fx:id="viewSecurityName7" layoutX="20.0" layoutY="95.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="49.4999942779541" />
                </children>
             </AnchorPane>
-            <AnchorPane fx:id="XLNXTab" layoutX="479.0" layoutY="6.0" onMouseClicked="#XLNXLineChartUpdate" prefHeight="111.0" prefWidth="92.0" style="-fx-border-color: #f9d6d4#f9d6d4 #f9d6d4#f9d6d4;">
+            <AnchorPane fx:id="XLNXTab" layoutX="479.0" layoutY="6.0" onMouseClicked="#XLNXLineChartUpdate" prefHeight="118.0" prefWidth="92.0" style="-fx-border-color: #f9d6d4#f9d6d4 #f9d6d4#f9d6d4;">
                <children>
                   <ImageView fitHeight="105.0" fitWidth="86.0" layoutX="2.0" layoutY="15.0" onMouseClicked="#XLNXLineChartUpdate" opacity="0.19" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -111,7 +114,7 @@
                   <Text fx:id="viewSecurityName6" layoutX="20.0" layoutY="95.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="49.4999942779541" />
                </children>
             </AnchorPane>
-            <AnchorPane fx:id="YHOOTab" layoutX="385.0" layoutY="6.0" onMouseClicked="#YHOOLineChartUpdate" prefHeight="113.0" prefWidth="92.0" style="-fx-border-color: #f9d6d4#f9d6d4 #f9d6d4#f9d6d4;">
+            <AnchorPane fx:id="YHOOTab" layoutX="385.0" layoutY="6.0" onMouseClicked="#YHOOLineChartUpdate" prefHeight="118.0" prefWidth="92.0" style="-fx-border-color: #f9d6d4#f9d6d4 #f9d6d4#f9d6d4;">
                <children>
                   <ImageView fitHeight="88.0" fitWidth="79.0" layoutX="4.0" layoutY="17.0" onMouseClicked="#YHOOLineChartUpdate" opacity="0.19" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -127,7 +130,7 @@
                   <Text fx:id="viewSecurityName5" layoutX="20.0" layoutY="96.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="49.4999942779541" />
                </children>
             </AnchorPane>
-            <AnchorPane fx:id="GOOGLTab" layoutX="291.0" layoutY="6.0" onMouseClicked="#GOOGLLineChartUpdate" prefHeight="113.0" prefWidth="93.0" style="-fx-border-color: #e0f2cd#e0f2cd;">
+            <AnchorPane fx:id="GOOGLTab" layoutX="291.0" layoutY="6.0" onMouseClicked="#GOOGLLineChartUpdate" prefHeight="118.0" prefWidth="93.0" style="-fx-border-color: #e0f2cd#e0f2cd;">
                <children>
                   <ImageView fitHeight="105.0" fitWidth="86.0" layoutX="2.0" layoutY="14.0" onMouseClicked="#GOOGLLineChartUpdate" opacity="0.19" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -143,7 +146,7 @@
                   <Text fx:id="viewSecurityName4" layoutX="20.0" layoutY="95.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="49.4999942779541" />
                </children>
             </AnchorPane>
-            <AnchorPane fx:id="MSFTTab" layoutX="200.0" layoutY="6.0" onMouseClicked="#MSFTLineChartUpdate" prefHeight="113.0" prefWidth="90.0" style="-fx-border-color: #f9d6d4#f9d6d4 #f9d6d4#f9d6d4;">
+            <AnchorPane fx:id="MSFTTab" layoutX="200.0" layoutY="6.0" onMouseClicked="#MSFTLineChartUpdate" prefHeight="118.0" prefWidth="90.0" style="-fx-border-color: #f9d6d4#f9d6d4 #f9d6d4#f9d6d4;">
                <children>
                   <ImageView fitHeight="95.0" fitWidth="86.0" layoutX="2.0" layoutY="2.0" onMouseClicked="#MSFTLineChartUpdate" opacity="0.19" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -159,7 +162,7 @@
                   <Text fx:id="viewSecurityName3" layoutX="18.0" layoutY="95.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="49.4999942779541" />
                </children>
             </AnchorPane>
-            <AnchorPane fx:id="VRTUTab" layoutX="110.0" layoutY="6.0" onMouseClicked="#VRTULineChartUpdate" prefHeight="113.0" prefWidth="89.0" style="-fx-border-color: #e0f2cd#e0f2cd;">
+            <AnchorPane fx:id="VRTUTab" layoutX="110.0" layoutY="6.0" onMouseClicked="#VRTULineChartUpdate" prefHeight="118.0" prefWidth="89.0" style="-fx-border-color: #e0f2cd#e0f2cd;">
                <children>
                   <ImageView fitHeight="105.0" fitWidth="86.0" layoutX="1.0" layoutY="4.0" onMouseClicked="#VRTULineChartUpdate" opacity="0.19" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -175,9 +178,9 @@
                   <Text fx:id="viewSecurityName2" layoutX="20.0" layoutY="95.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="49.4999942779541" />
                </children>
             </AnchorPane>
-            <AnchorPane fx:id="FBTab" layoutX="20.0" layoutY="6.0" onMouseClicked="#FBLineChartUpdate" prefHeight="113.0" prefWidth="89.0" style="-fx-border-color: #f9d6d4#f9d6d4;" AnchorPane.bottomAnchor="0.5" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="643.0" AnchorPane.topAnchor="6.0">
+            <AnchorPane fx:id="FBTab" layoutX="17.0" layoutY="7.0" onMouseClicked="#FBLineChartUpdate" prefHeight="123.0" prefWidth="93.0" style="-fx-border-color: #f9d6d4#f9d6d4;" AnchorPane.bottomAnchor="168.0" AnchorPane.leftAnchor="17.0" AnchorPane.rightAnchor="677.0" AnchorPane.topAnchor="7.0">
                <children>
-                  <ImageView fitHeight="105.0" fitWidth="86.0" layoutX="1.0" layoutY="3.0" onMouseClicked="#FBLineChartUpdate" opacity="0.19" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="94.0" fitWidth="92.0" layoutX="1.0" layoutY="3.0" onMouseClicked="#FBLineChartUpdate" opacity="0.19" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../Images/img1.png" />
                      </image>
@@ -197,7 +200,7 @@
             </AnchorPane>
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="TXNTab" layoutX="676.0" layoutY="77.0" onMouseClicked="#TXNLineChartUpdate" prefHeight="111.0" prefWidth="90.0" style="-fx-border-color: #f9d6d4#f9d6d4 #f9d6d4#f9d6d4;">
+      <AnchorPane fx:id="TXNTab" layoutX="676.0" layoutY="77.0" onMouseClicked="#TXNLineChartUpdate" prefHeight="118.0" prefWidth="90.0" style="-fx-border-color: #f9d6d4#f9d6d4 #f9d6d4#f9d6d4;">
          <children>
             <ImageView fitHeight="96.0" fitWidth="86.0" layoutX="2.0" layoutY="15.0" onMouseClicked="#TXNLineChartUpdate" opacity="0.19" pickOnBounds="true" preserveRatio="true">
                <image>
