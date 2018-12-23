@@ -21,6 +21,7 @@ import sample.ServerThreadStarters.ThreadEchoServer;
 
 import java.io.*;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -111,6 +112,9 @@ public class Controller  implements Initializable {
 
     @FXML
     private Text viewSecurityName5;
+
+    @FXML
+    private Label date;
 
     @FXML
     private Label viewPrice4;
@@ -354,7 +358,7 @@ public class Controller  implements Initializable {
         stockTable.setEditable(true);
 
 
-        String csvFile = "/Users/kesharaweerasinghe/Desktop/CO225/Server/src/sample/StockDatabase/stocks.csv";
+        String csvFile = "/Volumes/My Files/My Websites/Github/Auction-Server/Server/src/sample/StockDatabase/stocks.csv";
         BufferedReader br = null;
         String line = "";
         String cvsSplitBy = ",";
@@ -430,7 +434,6 @@ public class Controller  implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 
 
-
         try {
 
             try {
@@ -469,7 +472,10 @@ public class Controller  implements Initializable {
 
                 bidHistoryData = FXCollections.observableArrayList(ClientDB.mapClient.values());
 
-
+                String bidTime = new SimpleDateFormat("hh:mm:ss").format(new Date());
+                time.setText(bidTime);
+                String dateJava = new SimpleDateFormat("EEE, d MMM yyyy").format(new Date());
+                date.setText(dateJava);
                 if(bidHistoryData != null) updateClientHistoryTable();
 
             }));

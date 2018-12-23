@@ -27,7 +27,7 @@
                   <Font size="15.0" />
                </font>
             </Label>
-            <Label layoutX="20.0" layoutY="5.0" text="3rd December 2018" />
+            <Label fx:id="date" layoutX="20.0" layoutY="5.0" text="3rd December 2018" />
             <Label fx:id="time" layoutX="729.0" layoutY="5.0" prefHeight="17.0" prefWidth="63.0" text="13:23:44" />
          </children></AnchorPane>
       <AnchorPane layoutY="261.0" prefHeight="100.0" prefWidth="533.0">
