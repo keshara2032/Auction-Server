@@ -8,8 +8,8 @@ This program is a server-client model where clients can connect to the server us
 ## Getting Started
 
 
-1. First compile and run the Main.class file
-2. This will open up a GUI
+1. First go to "Source Code" folder and compile "Main.java" file, then compile "Controller.java".
+2. Run the program by entering "java Main" in the terminal. This will open up a GUI
 3. Then Select Server -> Start Server from the MenuBar
 4. Thereafter use another terminal to log in to the server as a client(Use the port 2000).
 5. Only within the same LAN is allowed to connect to the server at this stage.
@@ -38,8 +38,8 @@ You need to have Java installed and Netcat or telnet in order to connect to the 
 
 ## Authors
 
-* **Keshara Weerasinghe** 
-
+* **Keshara Weerasinghe     E15383** 
+* **Nithya Kularatne        E15188** 
 
 ## License
 
